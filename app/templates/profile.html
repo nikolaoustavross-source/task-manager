@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Profile – TaskManager{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h1>Profile Settings</h1>
+  <p class="subtitle">Logged in as <strong>{{ current_user.username }}</strong> ({{ current_user.email }})</p>
+
+  <form method="POST" action="{{ url_for('auth.profile') }}">
+    <div class="form-group">
+      <label for="city">Your City <span class="hint">(used for weather widget)</span></label>
+      <input type="text" id="city" name="city"
+             value="{{ current_user.city or '' }}"
+             placeholder="e.g. London" />
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Save Changes</button>
+      <a href="{{ url_for('tasks.dashboard') }}" class="btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

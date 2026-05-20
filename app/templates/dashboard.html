@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard – TaskManager{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+  <div>
+    <h1>Your Tasks</h1>
+    <p class="subtitle">Hello, {{ current_user.username }} 👋</p>
+  </div>
+
+  {% if weather %}
+  <div class="weather-widget">
+    <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="{{ weather.description }}" />
+    <div>
+      <span class="weather-temp">{{ weather.temp }}°C</span>
+      <span class="weather-city">{{ weather.city }}</span>
+      <span class="weather-desc">{{ weather.description }}</span>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Stats row -->
+<div class="stats-row">
+  <div class="stat-card">
+    <span class="stat-number">{{ total }}</span>
+    <span class="stat-label">Total</span>
+  </div>
+  <div class="stat-card stat-pending">
+    <span class="stat-number">{{ pending }}</span>
+    <span class="stat-label">Pending</span>
+  </div>
+  <div class="stat-card stat-done">
+    <span class="stat-number">{{ completed }}</span>
+    <span class="stat-label">Completed</span>
+  </div>
+</div>
+
+<!-- Filters -->
+<form method="GET" action="{{ url_for('tasks.dashboard') }}" class="filter-bar">
+  <div class="filter-group">
+    <label>Status:</label>
+    <select name="status" onchange="this.form.submit()">
+      <option value="ALL" {% if status_filter == 'ALL' %}selected{% endif %}>All</option>
+      <option value="PENDING" {% if status_filter == 'PENDING' %}selected{% endif %}>Pending</option>
+      <option value="COMPLETED" {% if status_filter == 'COMPLETED' %}selected{% endif %}>Completed</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Priority:</label>
+    <select name="priority" onchange="this.form.submit()">
+      <option value="ALL" {% if priority_filter == 'ALL' %}selected{% endif %}>All</option>
+      <option value="HIGH" {% if priority_filter == 'HIGH' %}selected{% endif %}>High</option>
+      <option value="MEDIUM" {% if priority_filter == 'MEDIUM' %}selected{% endif %}>Medium</option>
+      <option value="LOW" {% if priority_filter == 'LOW' %}selected{% endif %}>Low</option>
+    </select>
+  </div>
+  <a href="{{ url_for('tasks.new_task') }}" class="btn-primary">+ New Task</a>
+</form>
+
+<!-- Task list -->
+{% if tasks %}
+<div class="task-list">
+  {% for task in tasks %}
+  <div class="task-card {% if task.status == 'COMPLETED' %}task-done{% endif %} priority-{{ task.priority | lower }}">
+    <div class="task-main">
+      <div class="task-top">
+        <span class="task-title {% if task.status == 'COMPLETED' %}strikethrough{% endif %}">{{ task.title }}</span>
+        <span class="badge badge-{{ task.priority | lower }}">{{ task.priority }}</span>
+      </div>
+      {% if task.description %}
+        <p class="task-desc">{{ task.description }}</p>
+      {% endif %}
+      {% if task.due_date %}
+        <span class="task-due {% if task.due_date < today %}overdue{% endif %}">
+          📅 Due: {{ task.due_date.strftime('%d %b %Y') }}
+        </span>
+      {% endif %}
+    </div>
+
+    <div class="task-actions">
+      <form method="POST" action="{{ url_for('tasks.toggle_task', task_id=task.id) }}" style="display:inline">
+        <button type="submit" class="btn-toggle" title="{{ 'Mark Pending' if task.status == 'COMPLETED' else 'Mark Complete' }}">
+          {{ '↩ Undo' if task.status == 'COMPLETED' else '✓ Done' }}
+        </button>
+      </form>
+      <a href="{{ url_for('tasks.edit_task', task_id=task.id) }}" class="btn-edit">Edit</a>
+      <form method="POST" action="{{ url_for('tasks.delete_task', task_id=task.id) }}" style="display:inline"
+            onsubmit="return confirm('Delete this task?')">
+        <button type="submit" class="btn-delete">Delete</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <p>No tasks here yet.</p>
+  <a href="{{ url_for('tasks.new_task') }}" class="btn-primary">Create your first task</a>
+</div>
+{% endif %}
+
+{% endblock %}
