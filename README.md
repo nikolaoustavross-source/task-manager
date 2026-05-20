@@ -24,8 +24,6 @@ A demo account with example tasks is available on the live deployment:
 
 Or register your own account to start fresh.
 
-Otherwise do:
-
 ## Quick Start
 
 ```bash
