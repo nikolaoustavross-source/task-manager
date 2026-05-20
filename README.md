@@ -14,6 +14,18 @@ A full stack task management web application built with Flask, MySQL, Docker, an
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
 - A free [OpenWeatherMap API key](https://openweathermap.org/api)
 
+## Demo Account
+
+A demo account with example tasks is available on the live deployment:
+
+- **URL:** http://134.209.82.95
+- **Username:** stavros123
+- **Password:** 12345678
+
+Or register your own account to start fresh.
+
+Otherwise do:
+
 ## Quick Start
 
 ```bash
